@@ -1,10 +1,10 @@
+const {throwException} = require("../helpers/"); 
+
 const isAuthenticated = (req, res, next) => {
   try {
     const { accesstoken } = req.headers;
     if (!accesstoken || accesstoken !== "123") {
-      const error = new Error("Not authenticated");
-      error.status = 401;
-      throw error;
+      throwException("Not authenticated", 401);
     }
     next(); //router middleware
   } catch (error) {

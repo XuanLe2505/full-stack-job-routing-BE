@@ -6,7 +6,8 @@ const {
   generateRandomHexString,
   throwException,
 } = require("../helpers/utility");
-const isAuthenticated = require("../middleware/isAuthenticated")
+const isAuthenticated = require("../middleware/isAuthenticated");
+const queryValidation = require("../middleware/queryValidation")
 
 const loadData = () => {
   let db = fs.readFileSync("data.json", "utf8");
@@ -64,7 +65,7 @@ router.get("/", function (req, res, next) {
   return sendResponse(renamedDb, 200, `Companies list at the ${city}`, res, next);
 });
 
-router.post("/", isAuthenticated, function (req, res, next) {
+router.post("/", isAuthenticated, queryValidation, function (req, res, next) {
   try {
     const { name, benefits, description, ratings, jobs } = req.body;
     if (!name || !benefits || !description || !ratings || !jobs) {
@@ -86,6 +87,21 @@ router.post("/", isAuthenticated, function (req, res, next) {
     dataToSave = JSON.stringify(dataToSave);
     fs.writeFileSync("data.json", dataToSave);
     return sendResponse(companyObj, 200, `create ${name} company success`, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id", isAuthenticated, (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { companies } = data;
+    const message = `Get single company by id ${id}`;
+    const selectedCompany = companies.find((student) => student.id === id);
+    if (!selectedCompany) {
+      message = "Student with given ID is not found";
+    }
+    return res.status(200).send({ data: selectedCompany || {}, message });
   } catch (error) {
     next(error);
   }
