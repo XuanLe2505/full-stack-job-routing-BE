@@ -95,11 +95,11 @@ router.post("/", isAuthenticated, queryValidation, function (req, res, next) {
 router.get("/:id", isAuthenticated, (req, res, next) => {
   try {
     const { id } = req.params;
-    const { companies } = data;
+    const { companies } = loadData();
     const message = `Get single company by id ${id}`;
     const selectedCompany = companies.find((student) => student.id === id);
     if (!selectedCompany) {
-      message = "Student with given ID is not found";
+      message = "Company with given ID is not found";
     }
     return res.status(200).send({ data: selectedCompany || {}, message });
   } catch (error) {
