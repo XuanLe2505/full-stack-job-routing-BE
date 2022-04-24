@@ -35,7 +35,7 @@ function renameKeys(obj, newKeys) {
   return Object.assign({}, ...keyValues);
 }
 /* GET companies listing. */
-router.get("/", function (req, res, next) {
+router.get("/", queryValidation, function (req, res, next) {
   const page = req.query.page || 1;
   const limit = 20;
   const { city } = req.query;
@@ -48,7 +48,7 @@ router.get("/", function (req, res, next) {
     return sendResponse(renamedDb, 200, "Companies list", res, next);
   }
   const citiesList = city.split(",");
-  console.log(citiesList)
+  console.log(citiesList);
   let companiesListByCity = companies;
 
   citiesList.forEach((city) => {
@@ -62,10 +62,16 @@ router.get("/", function (req, res, next) {
 
   const db = pagination(page, limit, companiesListByCity);
   const renamedDb = renameKeys(db, { data: "companies" });
-  return sendResponse(renamedDb, 200, `Companies list at the ${city}`, res, next);
+  return sendResponse(
+    renamedDb,
+    200,
+    `Companies list at the ${city}`,
+    res,
+    next
+  );
 });
 
-router.post("/", isAuthenticated, queryValidation, function (req, res, next) {
+router.post("/", isAuthenticated, function (req, res, next) {
   try {
     const { name, benefits, description, ratings, jobs } = req.body;
     if (!name || !benefits || !description || !ratings || !jobs) {
