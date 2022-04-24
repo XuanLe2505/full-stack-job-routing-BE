@@ -1,4 +1,4 @@
-const {throwException} = require("../helpers"); 
+const {throwException} = require("../helpers/utility"); 
 
 const isAuthenticated = (req, res, next) => {
   try {
